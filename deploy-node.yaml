@@ -19,7 +19,7 @@
     - name: Create linux user
       user:
       # replace with your username
-        name: Username
+        name: "{{linux_name}}"
         comment: Node User
         group: admin
 
@@ -29,22 +29,24 @@
   hosts: X.X.X.X
   become: True
   # replace with your username
-  become_user: Username
+  become_user: "{{linux_name}}"
+  vars_files:
+    project-vars
   tasks:
     - name: Unpack the nodejs file
       unarchive:
         # replace with your folder location
-        src: path_to_folder/nodejs-app-1.0.0.tgz
+        src: "{{location}}/nodejs-app-{{version}}.tgz"
         # replace with your folder location
-        dest: home/username
+        dest: "{{user_home_dir}}"
     - name: Install dependencies
       npm:
         # replace with your folder location
-        path: home/username/package
+        path: "{{user_home_dir}}/package"
     - name: Start the application
       command:
         # replace with your folder location
-        chdir: home/username/package/app
+        chdir: "{{user_home_dir}}/package/app"
         cmd: node server
       async: 1000
       poll: 0
